@@ -1,0 +1,7 @@
+[Unit]
+Description=Themer
+[Service]
+ExecStart=themer
+Restart=always
+[Install]
+WantedBy=multi-user.target
