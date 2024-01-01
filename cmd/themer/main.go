@@ -59,6 +59,11 @@ func main() {
 	for {
 		select {
 		case signal := <-signals:
+			if signal == nil {
+				log.Printf("Received a nil signal")
+				continue
+			}
+
 			var settingsChanged freedesktop.SettingChanged
 			settingsChanged, err = freedesktop.ParseSettingChangedSignal(signal)
 			if err != nil {
