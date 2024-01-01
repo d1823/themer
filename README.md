@@ -68,6 +68,7 @@ source-file ~/.config/tmux/themes/current-theme.conf
 ## Setup
 
 To autostart themer, use your desktop environment's configuration or the provided *.service file to register a new systemd service.
+Make sure to use the correct unit-level dependency - `default.target` for user units, `multi-user.target` for system units.
 
 # License
 This project is licensed under the 3-Clause BSD license.

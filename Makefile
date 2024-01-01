@@ -53,7 +53,9 @@ compile-and-install:
 install-service:
 	install -m 764 templates/themer.service.template $(SERVICE_PREFIX)/themer.service 
 	sed -i'' "s#ExecStart\=themer#ExecStart\=\"$$(realpath $(DESTDIR)$(PREFIX)/bin/$(CMD))\"#" $(SERVICE_PREFIX)/themer.service 
-	echo "Remember to enable the service with systemd enable!"
+	echo "Remember to enable the service within systemd!"
+	echo
+	echo "If you plan to use it as a user service, make sure to replace the dependency from \"multi-user.target\" to \"default.target\"."
 
 .PHONY: build
 build:
