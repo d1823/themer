@@ -22,10 +22,10 @@ To use Themer, create a JSON configuration file at `$XDG_CONFIG_HOME/themer/conf
 
 ```json
 {
+    "no_preference_fallback": "dark",
     "adapters": [
         {
             "adapter": "alacritty",
-            "no_preference_file": "/home/user/.config/alacritty/themes/dark-theme.yml",
             "dark_preference_file": "/home/user/.config/alacritty/themes/dark-theme.yml",
             "light_preference_file": "/home/user/.config/alacritty/themes/light-theme.yml",
             "target_file": "/home/user/.config/alacritty/themes/current-theme.yml",
@@ -33,22 +33,39 @@ To use Themer, create a JSON configuration file at `$XDG_CONFIG_HOME/themer/conf
         },
         {
             "adapter": "tmux",
-            "no_preference_file": "/home/user/.config/tmux/themes/dark-theme.conf",
             "dark_preference_file": "/home/user/.config/tmux/themes/dark-theme.conf",
             "light_preference_file": "/home/user/.config/tmux/themes/light-theme.conf",
             "target_file": "/home/user/.config/tmux/themes/current-theme.conf",
             "tmux_config_file": "/home/user/.config/tmux/tmux.conf"
+        },
+        {
+            "adapter": "konsole",
+            "dark_profile_name": "Dark",
+            "light_profile_name": "Light"
         }
     ]
 }
 ```
 
-This example configuration supports theme-switching adapters that execute when the org.freedesktop.appearance.color-scheme is modified, configuring theme switching for Alacritty and Tmux.
+This example configuration supports theme-switching adapters that execute when the org.freedesktop.appearance.color-scheme is modified, configuring theme switching for Alacritty, Tmux and Konsole.
 
-The following adapters are currently available:
-- The *symlink* adapter receives the current color-scheme preference, selects the correct the theme file and symlinks it to the target path.
-- The *tmux* adapter uses the *symlink* adapter internally, but also executes `tmux source-file <tmux_config_file>` to make tmux reload its configuration.
-- The *alacritty* adapter uses the *symlink* adapter internally, but touches the `<alacritty_config_file>` to make alacritty reload its configuration.
+### Available adapters
+
+#### Symlink
+It receives the current color-scheme preference, selects the correct the theme file and symlinks it to the target path.
+
+#### Tmux
+It uses the *symlink* adapter internally, but also executes `tmux source-file <tmux_config_file>` to make tmux reload its configuration.
+
+Tmux requires a manual trigger to detect config changes, but the rest follows the same setup as in case of Alacritty.
+Add the following line to your tmux configuration:
+
+```conf
+source-file ~/.config/tmux/themes/current-theme.conf
+```
+
+#### Alacritty
+It uses the *symlink* adapter internally, but touches the `<alacritty_config_file>` to make alacritty reload its configuration.
 
 Alacritty automatically detects config changes, but only on the main config file. Changing the included `/home/user/.config/tmux/themes/current-theme.conf` won't trigger the config reload. That's why this adapter touches the config file.
 Add the following line to your Alacritty configuration:
@@ -58,12 +75,16 @@ import:
  - ~/.config/alacritty/themes/current-theme.yml
 ```
 
-Tmux requires a manual trigger to detect config changes, but the rest follows the same setup as in case of Alacritty.
-Add the following line to your tmux configuration:
+#### Konsole
+It utilizes the DBus integration to make Konsole switch to the configured profile.
 
-```conf
-source-file ~/.config/tmux/themes/current-theme.conf
-```
+To make this work, make sure you have two Konsole profiles configured for dark & light themes. Afterward, put their
+names into the `dark_profile_name` and `light_profile_name` properties.
+
+> :warning: **If you are running KDE**: Make sure to set the `no_preference_fallback` to "light".
+> Otherwise, switching to the light color scheme won't be possible.
+>
+> [See why](https://github.com/d1823/themer/commit/2e341291ff4b169bfca0b240dec69c886366fb49).
 
 ## Setup
 
