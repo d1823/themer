@@ -20,8 +20,6 @@ func ExecuteSymlinkAdapter(preference freedesktop.ColorSchemePreference, config 
 
 	preferenceFile := ""
 	switch preference {
-	case freedesktop.NoPreference:
-		preferenceFile = config.NoPreferenceFile
 	case freedesktop.PreferDarkAppearance:
 		preferenceFile = config.DarkPreferenceFile
 	case freedesktop.PreferLightAppearance:
@@ -89,8 +87,6 @@ func ExecuteKonsoleAdapter(preference freedesktop.ColorSchemePreference, config 
 
 	var profileName string
 	switch preference {
-	case freedesktop.NoPreference:
-		profileName = config.NoPreferenceProfileName
 	case freedesktop.PreferDarkAppearance:
 		profileName = config.DarkProfileName
 	case freedesktop.PreferLightAppearance:

@@ -87,6 +87,15 @@ func main() {
 				continue
 			}
 
+			if colorSchemePreference == freedesktop.NoPreference {
+				switch c.NoPreferenceFallback {
+				case config.NoPreferenceFallbackDark:
+					colorSchemePreference = freedesktop.PreferDarkAppearance
+				case config.NoPreferenceFallbackLight:
+					colorSchemePreference = freedesktop.PreferLightAppearance
+				}
+			}
+
 			for _, a := range c.Adapters {
 				switch a.(type) {
 				case config.SymlinkAdapter:

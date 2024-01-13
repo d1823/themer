@@ -6,9 +6,15 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+type NoPreferenceFallback string
+
+const (
+	NoPreferenceFallbackDark  NoPreferenceFallback = "dark"
+	NoPreferenceFallbackLight NoPreferenceFallback = "light"
+)
+
 // SymlinkAdapter represents the Symlink adapter configuration.
 type SymlinkAdapter struct {
-	NoPreferenceFile    string `mapstructure:"no_preference_file"`
 	DarkPreferenceFile  string `mapstructure:"dark_preference_file"`
 	LightPreferenceFile string `mapstructure:"light_preference_file"`
 	TargetFile          string `mapstructure:"target_file"`
@@ -28,15 +34,15 @@ type AlacrittyAdapter struct {
 
 // KonsoleAdapter represents the Konsole adapter configuration.
 type KonsoleAdapter struct {
-	SymlinkAdapter          `mapstructure:",squash"`
-	NoPreferenceProfileName string `mapstructure:"no_preference_profile_name"`
-	DarkProfileName         string `mapstructure:"dark_profile_name"`
-	LightProfileName        string `mapstructure:"light_profile_name"`
+	SymlinkAdapter   `mapstructure:",squash"`
+	DarkProfileName  string `mapstructure:"dark_profile_name"`
+	LightProfileName string `mapstructure:"light_profile_name"`
 }
 
 // Configuration represents the top-level configuration structure.
 type Configuration struct {
-	Adapters []interface{} `json:"adapters"`
+	NoPreferenceFallback NoPreferenceFallback `json:"no_preference_fallback"`
+	Adapters             []interface{}        `json:"adapters"`
 }
 
 // UnmarshalJSON customizes the JSON unmarshaling process for Configuration.
@@ -44,6 +50,21 @@ func (c *Configuration) UnmarshalJSON(data []byte) error {
 	var configData map[string]interface{}
 	if err := json.Unmarshal(data, &configData); err != nil {
 		return fmt.Errorf("failed to unmarshal configuration JSON data: %v", err)
+	}
+
+	noPreferenceFallbackData, ok := configData["no_preference_fallback"].(string)
+	if !ok {
+		return fmt.Errorf("configuration JSON does not contain an 'no_preference_fallback' string")
+	}
+	switch noPreferenceFallbackData {
+	case string(NoPreferenceFallbackDark):
+		c.NoPreferenceFallback = NoPreferenceFallbackDark
+		fallthrough
+	case string(NoPreferenceFallbackLight):
+		c.NoPreferenceFallback = NoPreferenceFallbackLight
+		break
+	default:
+		return fmt.Errorf("configuration JSON does not contain a valid 'no_preference_fallback' value")
 	}
 
 	adaptersData, ok := configData["adapters"].([]interface{})
