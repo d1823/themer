@@ -11,6 +11,16 @@ endif
 ifeq ($(XDG_CONFIG_HOME),)
     XDG_CONFIG_HOME := /etc
 endif
+ifeq ($(OS),)
+	OS := linux
+endif
+ifeq ($(ARCH),)
+	ARCH := amd64
+endif
+ifeq ($(CMD),)
+	CMD := themer
+endif
+
 .PHONY: help
 help:
 	@echo "Usage: [variables] make <target>"
@@ -33,16 +43,16 @@ help:
 
 .PHONY: install
 install:
-	OS=linux ARCH=amd64 CMD=themer $(MAKE) compile-and-install
+	$(MAKE) compile-and-install
 
 .PHONY: install-autostart
 install-autostart:
-	OS=linux ARCH=amd64 CMD=themer $(MAKE) compile-and-install
-	CMD=themer $(MAKE) install-service
+	$(MAKE) compile-and-install
+	$(MAKE) install-service
 
 .PHONY: compile-and-install
 compile-and-install:
-	OS=$(OS) ARCH=$(ARCH) CMD=$(CMD) $(MAKE) compile
+	$(MAKE) compile
 	install -d $(DESTDIR)$(PREFIX)/bin
 	install -m 755 build/$(CMD)/$(CMD)_$(OS)_$(ARCH) $(DESTDIR)$(PREFIX)/bin/$(CMD)
 	install -d $(XDG_CONFIG_HOME)/themer
@@ -59,7 +69,7 @@ install-service:
 
 .PHONY: build
 build:
-	OS=linux ARCH=amd64 CMD=themer $(MAKE) compile
+	$(MAKE) compile
 
 .PHONY: compile
 compile: build/$(CMD)/$(CMD)_$(OS)_$(ARCH)
