@@ -26,6 +26,14 @@ type AlacrittyAdapter struct {
 	AlacrittyConfigFile string `mapstructure:"alacritty_config_file"`
 }
 
+// KonsoleAdapter represents the Konsole adapter configuration.
+type KonsoleAdapter struct {
+	SymlinkAdapter          `mapstructure:",squash"`
+	NoPreferenceProfileName string `mapstructure:"no_preference_profile_name"`
+	DarkProfileName         string `mapstructure:"dark_profile_name"`
+	LightProfileName        string `mapstructure:"light_profile_name"`
+}
+
 // Configuration represents the top-level configuration structure.
 type Configuration struct {
 	Adapters []interface{} `json:"adapters"`
@@ -68,6 +76,12 @@ func (c *Configuration) UnmarshalJSON(data []byte) error {
 				return fmt.Errorf("failed to decode 'alacritty' adapter: %v", err)
 			}
 			c.Adapters = append(c.Adapters, alacritty)
+		case "konsole":
+			konsole := KonsoleAdapter{}
+			if err := mapstructure.Decode(adapter, &konsole); err != nil {
+				return fmt.Errorf("failed to decode 'konsole' adapter: %v", err)
+			}
+			c.Adapters = append(c.Adapters, konsole)
 		default:
 			return fmt.Errorf("unknown adapter type: %v", adapter["adapter"])
 		}

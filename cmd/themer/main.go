@@ -104,6 +104,11 @@ func main() {
 					if err != nil {
 						log.Printf("Executing the AlacrittyAdapter: %v", err)
 					}
+				case config.KonsoleAdapter:
+					err := adapter.ExecuteKonsoleAdapter(colorSchemePreference, a.(config.KonsoleAdapter))
+					if err != nil {
+						log.Printf("Executing the KonsoleAdapter: %v", err)
+					}
 				default:
 					log.Fatalf("Unknown adapter: %T", a)
 				}
