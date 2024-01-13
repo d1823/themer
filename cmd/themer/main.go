@@ -60,7 +60,6 @@ func main() {
 		select {
 		case signal := <-signals:
 			if signal == nil {
-				log.Printf("Received a nil signal")
 				continue
 			}
 
