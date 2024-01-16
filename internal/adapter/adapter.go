@@ -74,9 +74,22 @@ type Node struct {
 func ExecuteKonsoleAdapter(preference freedesktop.ColorSchemePreference, config config.KonsoleAdapter) error {
 	// NOTE: The connection returned by the dbus.SessionBus is shared.
 	//       Closing it here would mean the main package would no longer receive the signals it's waiting for.
-	conn, err := dbus.SessionBus()
+	conn, err := dbus.SessionBusPrivate()
 	if err != nil {
 		log.Fatalf("Failed to connect to the D-Bus session bus: %v", err)
+	}
+	defer func() {
+		if closeErr := conn.Close(); closeErr != nil {
+			log.Printf("Failed to close the connection: %v", closeErr)
+		}
+	}()
+
+	if err = conn.Auth(nil); err != nil {
+		log.Fatalf("Failed to authentication with the D-Bus session bus: %v", err)
+	}
+
+	if err = conn.Hello(); err != nil {
+		log.Fatalf("Failed to greet with the D-Bus session bus: %v", err)
 	}
 
 	var listedServices []string

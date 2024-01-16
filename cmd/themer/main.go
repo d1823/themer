@@ -39,11 +39,23 @@ func main() {
 		log.Fatalf("parsing the config file from %s: %v", p, err)
 	}
 
-	conn, err := dbus.SessionBus()
+	conn, err := dbus.SessionBusPrivate()
 	if err != nil {
 		log.Fatalf("Failed to connect to the D-Bus session bus: %v", err)
 	}
-	defer conn.Close()
+	defer func() {
+		if closeErr := conn.Close(); closeErr != nil {
+			log.Printf("Failed to close the connection: %v", closeErr)
+		}
+	}()
+
+	if err = conn.Auth(nil); err != nil {
+		log.Fatalf("Failed to authentication with the D-Bus session bus: %v", err)
+	}
+
+	if err = conn.Hello(); err != nil {
+		log.Fatalf("Failed to greet with the D-Bus session bus: %v", err)
+	}
 
 	matchRule := "type='signal',path='/org/freedesktop/portal/desktop',interface='org.freedesktop.impl.portal.Settings',member='SettingChanged'"
 
