@@ -1,7 +1,6 @@
 package adapter
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"github.com/d1823/themer/internal/config"
@@ -142,21 +141,4 @@ func ExecuteKonsoleAdapter(preference freedesktop.ColorSchemePreference, config 
 	}
 
 	return nil
-}
-
-func runCmd(args []string) (string, string, error) {
-	tmux, err := exec.LookPath("tmux")
-	if err != nil {
-		return "", "", err
-	}
-	cmd := exec.Command(tmux, args...)
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err = cmd.Run()
-	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-
-	return outStr, errStr, err
 }
