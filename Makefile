@@ -74,7 +74,7 @@ build:
 .PHONY: compile
 compile: build/$(CMD)/$(CMD)_$(OS)_$(ARCH)
 
-build/$(CMD)/$(CMD)_$(OS)_$(ARCH): $(shell find cmd/$(CMD) -type f -name '*.go' -print)
+build/$(CMD)/$(CMD)_$(OS)_$(ARCH): $(shell find . -type f -name '*.go' -print)
 	mkdir -p $(shell dirname $@)
 	rm -f $@
 	CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(ARCH) go build -o $@ ./cmd/$(CMD)
