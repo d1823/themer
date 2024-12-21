@@ -13,6 +13,27 @@ import (
 	"time"
 )
 
+func ExecuteGSettingsGTKThemeAdapter(preference freedesktop.ColorSchemePreference, config config.GSettingsGTKThemeAdapter) error {
+	theme := ""
+	switch preference {
+	case freedesktop.PreferDarkAppearance:
+		theme = config.DarkThemeName
+	case freedesktop.PreferLightAppearance:
+		theme = config.LightThemeName
+	default:
+		return fmt.Errorf("invalid preference: %v", preference)
+	}
+
+	cmd := exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", theme)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to set GTK theme: %w", err)
+	}
+	return nil
+}
+
 func ExecuteSymlinkAdapter(preference freedesktop.ColorSchemePreference, config config.SymlinkAdapter) error {
 	// NOTE: The target file might not yet exist.
 	_ = os.Remove(config.TargetFile)

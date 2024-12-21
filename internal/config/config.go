@@ -13,6 +13,12 @@ const (
 	NoPreferenceFallbackLight NoPreferenceFallback = "light"
 )
 
+// GSettingsGTKThemeAdapter represents the GSettings GTK Theme adapter configuration.
+type GSettingsGTKThemeAdapter struct {
+	DarkThemeName  string `mapstructure:"dark_theme_name"`
+	LightThemeName string `mapstructure:"light_theme_name"`
+}
+
 // SymlinkAdapter represents the Symlink adapter configuration.
 type SymlinkAdapter struct {
 	DarkPreferenceFile  string `mapstructure:"dark_preference_file"`
@@ -79,6 +85,12 @@ func (c *Configuration) UnmarshalJSON(data []byte) error {
 		}
 
 		switch adapter["adapter"] {
+		case "gsettings-gtk-theme":
+			gsettingsGTKTheme := GSettingsGTKThemeAdapter{}
+			if err := mapstructure.Decode(adapter, &gsettingsGTKTheme); err != nil {
+				return fmt.Errorf("failed to decode 'gsettings-gtk-theme' adapter: %v", err)
+			}
+			c.Adapters = append(c.Adapters, gsettingsGTKTheme)
 		case "symlink":
 			symlink := SymlinkAdapter{}
 			if err := mapstructure.Decode(adapter, &symlink); err != nil {

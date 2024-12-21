@@ -109,6 +109,11 @@ func main() {
 
 			for _, a := range c.Adapters {
 				switch a.(type) {
+				case config.GSettingsGTKThemeAdapter:
+					err := adapter.ExecuteGSettingsGTKThemeAdapter(colorSchemePreference, a.(config.GSettingsGTKThemeAdapter))
+					if err != nil {
+						log.Printf("Executing the GSettingsGTKThemeAdapter: %v", err)
+					}
 				case config.SymlinkAdapter:
 					err := adapter.ExecuteSymlinkAdapter(colorSchemePreference, a.(config.SymlinkAdapter))
 					if err != nil {

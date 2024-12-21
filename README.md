@@ -86,6 +86,26 @@ names into the `dark_profile_name` and `light_profile_name` properties.
 >
 > [See why](https://github.com/d1823/themer/commit/2e341291ff4b169bfca0b240dec69c886366fb49).
 
+#### GSettings GTK Theme
+Under the newest GNOME, some applications (ex. Sublime Text) don't react to theme changes unless the change is propagated to
+the `org.gnome.desktop.interface gtk-theme` under GSettings. The same setting is also available under the `Tweaks` application
+at `Appearance > Styles > Legacy Applications` where you choose one of the available themes. Under Fedora, by default, the light mode
+equals `Adwaita`, while the dark mode equals `Adwaita-dark`. Put them in `dark_theme_name` and `light_theme_name` properties.
+
+> :warning: If you're using a non-standard setup, your theme names may be different.
+
+```conf
+{
+    "adapters": [
+        {
+            "adapter": "gsettings-gtk-theme",
+            "dark_theme_name": "Adwaita-dark",
+            "light_theme_name": "Adwaita"
+        }
+    ]
+}
+```
+
 ## Setup
 
 To autostart themer, use your desktop environment's configuration or the provided *.service file to register a new systemd service.
